@@ -11,19 +11,6 @@ jobs:
 
         runs-on: ${{ matrix.platform }}
         steps:
-            - name: Get yarn cache directory path
-              id: yarn-cache-dir-path
-              run: echo "::set-output name=dir::$(yarn cache dir)"
-            - uses: actions/cache@v3
-              with:
-                path: |
-                  ${{ steps.yarn-cache-dir-path.outputs.dir }}
-                  ~/.cargo/bin/
-                  ~/.cargo/registry/index/
-                  ~/.cargo/registry/cache/
-                  ~/.cargo/git/db/
-                  target/
-                key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-yarn-${{ hashFiles('**/yarn.lock') }}
             - uses: actions/checkout@v2
             - name: setup node
               uses: actions/setup-node@v1
@@ -36,7 +23,7 @@ jobs:
               uses: actions-rs/toolchain@v1
               with:
                   toolchain: stable
-
+            - uses: Swatinem/rust-cache@v1
             - name: install app dependencies and build it
               env:
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
